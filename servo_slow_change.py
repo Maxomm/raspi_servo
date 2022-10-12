@@ -46,12 +46,7 @@ def move_servo(pos):
 
 
 def correct_value(angle):
-    if angle < 0:
-        return 0
-    elif angle > 120:
-        return 120
-    else:
-        return angle
+    return 0 if angle < 0 else 120 if angle > 120 else angle
 
 
 def move_servos_slow(goal):
