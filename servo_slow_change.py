@@ -45,7 +45,7 @@ def move_servo(pos):
         s_pair[1] = reverse(pos[index])
 
 
-def correct_value(angle):
+def clamp_value(angle):
     return 0 if angle < 0 else 120 if angle > 120 else angle
 
 
@@ -64,7 +64,7 @@ def move_servos_slow(goal):
             if factor_list[i] != 0:
                 current_angle = int(s_list[i][0].angle)
                 current_angle += mysign(range_list[i]) / factor_list[i]
-                current_angle = correct_value(current_angle)
+                current_angle = clamp_value(current_angle)
                 s_list[i][0].angle = current_angle
                 s_list[i][1].angle = reverse(current_angle)
         # print(s_list)
