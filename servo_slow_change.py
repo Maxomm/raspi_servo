@@ -7,7 +7,9 @@ PORT = 12345
 # LOCAL
 HOST = "192.168.1.1"
 # HOST = "127.0.0.1"
+
 STEPS = 10
+
 kit = ServoKit(channels=16)
 
 
@@ -123,4 +125,4 @@ if __name__ == "__main__":
             rnd_st = random.choice(list(states))
             move_servos_slow(states[rnd_st])
             current_state = rnd_st
-        
+
