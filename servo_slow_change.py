@@ -1,12 +1,13 @@
 import socket
 import time
+import random
 from adafruit_servokit import ServoKit
 
 PORT = 12345
 # LOCAL
 HOST = "192.168.1.1"
 # HOST = "127.0.0.1"
-STEPS = 5
+STEPS = 10
 kit = ServoKit(channels=16)
 
 
@@ -18,13 +19,13 @@ s_list = [
 
 
 states = {
-    "Neutral": [20, 20, 20],
-    "Angry": [110, 60, 0],
-    "Sad": [110, 110, 110],
-    "Surprised": [0, 0, 0],
-    "Disgusted": [0, 60, 110],
-    "Happy": [60, 60, 60],
-    "Fearful": [60, 30, 60],
+    "Neutral": [[20, 20, 20],10],
+    "Angry": [[110, 60, 0],1],
+    "Sad": [[110, 110, 110],15],
+    "Surprised": [[0, 0, 0],1],
+    "Disgusted": [[0, 60, 110],7],
+    "Happy": [[60, 60, 60],10],
+    "Fearful": [[60, 30, 60],7],
 }
 
 
@@ -45,16 +46,26 @@ def move_servo(pos):
         s_pair[1] = reverse(pos[index])
 
 
-def correct_value(angle):
-    if angle < 0:
-        return 0
-    elif angle > 120:
-        return 120
-    else:
-        return angle
+def clamp_value(angle):
+    return 0 if angle < 0 else 120 if angle > 120 else angle
 
 
-def move_servos_slow(goal):
+def upper(x):
+    return x+5
+
+def downer(x):
+    return x-5
+
+
+def groove(input_values):
+    goal, STEPS = input_values
+    move_servos_slow([list(map(upper,goal)),9])
+    
+    move_servos_slow([list(map(downer,goal)),9])
+    
+
+def move_servos_slow(input_values):
+    goal, STEPS = input_values
     range_list = [0, 0, 0]
     factor_list = [0, 0, 0]
     for i in range(3):
@@ -69,7 +80,7 @@ def move_servos_slow(goal):
             if factor_list[i] != 0:
                 current_angle = int(s_list[i][0].angle)
                 current_angle += mysign(range_list[i]) / factor_list[i]
-                current_angle = correct_value(current_angle)
+                current_angle = clamp_value(current_angle)
                 s_list[i][0].angle = current_angle
                 s_list[i][1].angle = reverse(current_angle)
         # print(s_list)
@@ -88,6 +99,8 @@ def start():
                 if msg in states:
                     move_servos_slow(states[msg])
                     last_emo = msg
+            else:
+                groove(states[msg])
 
         except socket.error:
             break
@@ -96,5 +109,18 @@ def start():
 
 
 if __name__ == "__main__":
-    start()
-    
+    # start()
+    print(map(upper,[1,1,1]))
+    #for state in states:
+    #    print(state, states[state][1])
+    #    move_servos_slow(states[state])
+    current_state = "Happy"
+    while True:
+        rnd_v = random.randrange(0,5)
+        print(rnd_v)
+        groove(states[current_state])
+        if rnd_v == 3:
+            rnd_st = random.choice(list(states))
+            move_servos_slow(states[rnd_st])
+            current_state = rnd_st
+        

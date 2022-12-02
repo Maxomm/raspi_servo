@@ -1,4 +1,5 @@
 import socket
+import time
 
 from adafruit_servokit import ServoKit
 
@@ -9,17 +10,17 @@ kit = ServoKit(channels=16)
 
 s_list = [
     [kit.servo[10], kit.servo[11]],
-    [kit.servo[12], kit.servo[13]],
+    [kit.servo[13], kit.servo[12]],
     [kit.servo[15], kit.servo[14]],
 ]
 
 states = {
     "Neutral": [60, 60, 60],
-    "Angry": [0, 60, 110],
+    "Angry": [110, 60, 0],
     "Sad": [110, 110, 110],
     "Surprised": [0, 0, 0],
-    "Disgusted": [110, 60, 0],
-    "Happy": [10, 50, 100],
+    "Disgusted": [0, 60, 110],
+    "Happy": [100, 50, 10],
     "Fearful": [0, 30, 60],
 }
 
@@ -61,4 +62,8 @@ def start():
 
 
 if __name__ == "__main__":
-    start()
+    for state in states:
+        print(state)
+        move_servo(states[state])
+        time.sleep(1)
+    #start()
