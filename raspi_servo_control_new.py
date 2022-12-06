@@ -4,7 +4,7 @@ from adafruit_servokit import ServoKit
 
 PORT = 12345
 # LOCAL
-HOST = "192.168.1.1"
+HOST = "192.168.0.183"
 # HOST = "127.0.0.1"
 
 STEPS = 10
@@ -44,17 +44,16 @@ def clamp_value(angle):
 
 def move_servos(input_values):
     for i in range(3):
-        current_angle = clamp_value(input_values)
+        current_angle = clamp_value(input_values[i])
         s_list[i][0].angle = current_angle
         s_list[i][1].angle = reverse(current_angle)
     # print(s_list)
-    time.sleep(0.05)
 
 
 def start():
-    factor = [0.5] * 3
+    factor = [1] * 3
     position = [0] * 3
-    pos_rng = 5
+    pos_rng = 3
     cur_st = "Surprised"
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.connect((HOST, PORT))
