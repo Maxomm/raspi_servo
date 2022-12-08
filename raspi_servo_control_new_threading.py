@@ -6,12 +6,12 @@ from adafruit_servokit import ServoKit
 
 PORT = 12345
 # LOCAL
-# HOST = "192.168.1.1"
-HOST = "127.0.0.1"
+HOST = "192.168.0.183"
+# HOST = "127.0.0.1"
 
 STEPS = 10
 
-# kit = ServoKit(channels=16)
+kit = ServoKit(channels=16)
 
 
 # fake_s_list = [[0, 0]] * 3
@@ -23,13 +23,13 @@ s_list = [
 
 
 states = {
-    "Neutral": [20, 20, 20],
-    "Angry": [110, 60, 0],
-    "Sad": [110, 110, 110],
-    "Surprised": [0, 0, 0],
-    "Disgusted": [0, 60, 110],
-    "Happy": [60, 60, 60],
-    "Fearful": [60, 30, 60],
+    "Neutral": [[20, 20, 20],1],
+    "Angry": [[110, 60, 0],5],
+    "Sad": [[110, 110, 110],1],
+    "Surprised": [[0, 0, 0],3],
+    "Disgusted": [[0, 60, 110],2],
+    "Happy": [[60, 60, 60],2],
+    "Fearful": [[60, 30, 60],2],
 }
 
 
@@ -47,11 +47,11 @@ def clamp_value(angle):
 
 def move_servos(input_values):
     for i in range(3):
-        current_angle = clamp_value(input_values)
+        current_angle = clamp_value(input_values[i])
         s_list[i][0].angle = current_angle
         s_list[i][1].angle = reverse(current_angle)
     # print(s_list)
-    time.sleep(0.05)
+    time.sleep(0.1)
 
 
 """
@@ -90,7 +90,7 @@ class EmotionTracker:
 
 
 def start():
-    factor = [0.5] * 3
+    factor = [1] * 3
     position = [0] * 3
     pos_rng = 5
     cur_st = "Surprised"
@@ -101,10 +101,11 @@ def start():
     while True:
         try:
             cur_st = emotrack.get_emotion()
-            for i in range(3):
-                if factor[i] > 0 and position[i] >= states[cur_st][i] + pos_rng:
+            factor = [1*states[cur_st][1]] * 3
+            for i, st_pos in enumerate(states[cur_st][0]):
+                if factor[i] > 0 and position[i] >= st_pos + pos_rng:
                     factor[i] = -factor[i]
-                elif factor[i] < 0 and position[i] <= states[cur_st][i] - pos_rng:
+                elif factor[i] < 0 and position[i] <= st_pos - pos_rng:
                     factor[i] = -factor[i]
                 position[i] += factor[i]
             move_servos(position)
