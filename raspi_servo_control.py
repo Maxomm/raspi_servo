@@ -1,5 +1,4 @@
 import socket
-import time
 
 from adafruit_servokit import ServoKit
 
@@ -29,12 +28,6 @@ def reverse(degree):
     return 180 - degree
 
 
-def mysign(x):
-    if x >= 0:
-        return 1
-    return -1
-
-
 def move_servo(pos):
     print(f"moving motors to {pos}")
     for index, s_pair in enumerate(s_list):
@@ -62,8 +55,4 @@ def start():
 
 
 if __name__ == "__main__":
-    for state in states:
-        print(state)
-        move_servo(states[state])
-        time.sleep(1)
-    #start()
+    start()
